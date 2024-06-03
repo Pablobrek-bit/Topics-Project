@@ -1,5 +1,6 @@
 package com.example.topicproject.exceptions;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.example.topicproject.domain.dto.error.ErrorDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,16 @@ public class HandleExceptions {
 
         return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
     }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<?> handleTokenExpiredException(TokenExpiredException ex, WebRequest request){
+        var errorResponse =
+                new CustomException<>(request.getDescription(false),
+                        ex.getMessage(), HttpStatus.UNAUTHORIZED);
+
+        return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
+    }
+
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleRuntimeException(RuntimeException ex, WebRequest request){
