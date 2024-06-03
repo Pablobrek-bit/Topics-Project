@@ -1,6 +1,10 @@
 package com.example.topicproject.domain.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,6 +12,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
 public class User {
 
     @Id
@@ -22,7 +30,7 @@ public class User {
     @Column(name = "created_at",nullable = false)
     private LocalDateTime createdAt;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "user_profiles",
             joinColumns = @JoinColumn(name = "user_id"),
