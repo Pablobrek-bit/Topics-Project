@@ -1,13 +1,15 @@
 package com.example.topicproject.domain.service;
 
-import com.example.topicproject.domain.dto.profile.ProfileDetailsDTO;
 import com.example.topicproject.domain.dto.user.CreateUserDTO;
-import com.example.topicproject.domain.dto.user.UserDetails;
+import com.example.topicproject.domain.dto.user.UpdateUserDTO;
+import com.example.topicproject.domain.dto.user.UserDetailsDTO;
 import com.example.topicproject.domain.dto.user.UserIdDTO;
 import com.example.topicproject.domain.entities.User;
 import com.example.topicproject.domain.repository.UserRepository;
 import com.example.topicproject.exceptions.CustomExceptions.EmailAlreadyRegistered;
+import com.example.topicproject.exceptions.CustomExceptions.UnauthorizedActivityException;
 import com.example.topicproject.exceptions.CustomExceptions.UserNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    @Transactional
     public UserIdDTO createUser(CreateUserDTO createUserDTO){
         verifyEmail(createUserDTO.email());
 
@@ -30,15 +33,16 @@ public class UserService {
         return new UserIdDTO(user.getId());
     }
 
-    public UserDetails getUser(String id){
-        User user = userRepository.findById(id)
+    public UserDetailsDTO getUser(String id){
+        return findById(id);
+    }
+
+    public UserDetailsDTO findById(String id){
+        return userRepository.findById(id)
+                .map(UserDetailsDTO::new)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
 
-        return new UserDetails(user.getId(), user.getName(), user.getEmail(),
-                user.getProfiles().stream()
-                        .findFirst()
-                        .map(profile -> new ProfileDetailsDTO(profile.getName()))
-                        .orElse(null));
+
     }
 
     private void verifyEmail(String email){
@@ -47,4 +51,35 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public UserDetailsDTO updateUser(String userId, UpdateUserDTO updateUserDTO) {
+        var user = findById(userId);
+
+        var passwordMatches =
+                new BCryptPasswordEncoder().matches(updateUserDTO.password(),
+                        user.getPassword());
+
+        if(!passwordMatches){
+            throw new UnauthorizedActivityException("Invalid password");
+        }
+
+        if(updateUserDTO.name() != null){
+            user.setName(updateUserDTO.name());
+        }
+
+        if(updateUserDTO.email() != null){
+            verifyEmail(updateUserDTO.email());
+            user.setEmail(updateUserDTO.email());
+        }
+
+        if(updateUserDTO.newPassword() != null){
+            user.setPassword(new BCryptPasswordEncoder().encode(updateUserDTO.newPassword()));
+        }
+
+        var newUser = user.toEntity();
+
+        var updatedUser = userRepository.save(newUser);
+
+        return new UserDetailsDTO(updatedUser);
+    }
 }

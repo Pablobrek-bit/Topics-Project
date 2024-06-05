@@ -1,10 +1,8 @@
 package com.example.topicproject.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jdk.jfr.Timestamp;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -19,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
+@ToString
 public class User implements UserDetails {
 
     @Id
@@ -31,6 +30,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
     @Column(name = "created_at",nullable = false)
+    @Timestamp
     private LocalDateTime createdAt;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
@@ -41,6 +41,8 @@ public class User implements UserDetails {
     )
     private List<Profile> profiles = new ArrayList<>();
 
+//    @OneToMany(mappedBy = "user")
+//    private List<Topic> topics = new ArrayList<>();
     @OneToMany(mappedBy = "user")
     private List<Topic> topics = new ArrayList<>();
 

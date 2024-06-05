@@ -1,6 +1,7 @@
 package com.example.topicproject.application.controller;
 
 import com.example.topicproject.domain.dto.user.CreateUserDTO;
+import com.example.topicproject.domain.dto.user.UpdateUserDTO;
 import com.example.topicproject.domain.service.UserService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -38,6 +39,15 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<?> getMe(@RequestAttribute("id") String userId){
         var user = userService.getUser(userId);
+        return ResponseEntity.ok(user);
+    }
+
+    @PutMapping
+    public ResponseEntity<?> updateUser(@RequestAttribute("id") String userId,
+                                        @RequestBody @Valid UpdateUserDTO updateUserDTO){
+        System.out.println("chegou aqui");
+        var user = userService.updateUser(userId, updateUserDTO);
+
         return ResponseEntity.ok(user);
     }
 
