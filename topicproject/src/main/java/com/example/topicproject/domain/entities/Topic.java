@@ -1,6 +1,7 @@
 package com.example.topicproject.domain.entities;
 
 import jakarta.persistence.*;
+import jdk.jfr.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,13 +30,14 @@ public class Topic {
     private String description;
 
     @Column(name = "created_at",nullable = false)
+    @Timestamp
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private String status;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
