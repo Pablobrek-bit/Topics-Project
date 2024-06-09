@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CourseService courseService;
 
     @Transactional
     public UserIdDTO createUser(CreateUserDTO createUserDTO){
@@ -81,5 +82,20 @@ public class UserService {
         var updatedUser = userRepository.save(newUser);
 
         return new UserDetailsDTO(updatedUser);
+    }
+
+    @Transactional
+    public void registerUserInCourse(String userId, Long courseId) {
+        System.out.println("chegou aqui");
+        var course = courseService.findById(courseId);
+
+        var user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+
+        course.getUsers().add(user);
+
+        user.getCourses().add(course);
+
+        userRepository.save(user);
     }
 }

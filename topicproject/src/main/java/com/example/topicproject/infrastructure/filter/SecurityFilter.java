@@ -27,7 +27,8 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var authorizationHeader = request.getHeader("Authorization");
 
-        var isRouteToCreateUser = request.getRequestURL().toString().contains("/users") && request.getMethod().equals("POST");
+        var isRouteToCreateUser =
+                request.getRequestURL().toString().contains("/users/register") && request.getMethod().equals("POST");
         var isRouteToAuth = request.getRequestURL().toString().contains("/auth");
 
 

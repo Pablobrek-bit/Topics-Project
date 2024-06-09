@@ -36,7 +36,6 @@ public class HandleExceptions {
         return new ResponseEntity<>(errorResponse, errorResponse.getStatus());
     }
 
-
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleRuntimeException(RuntimeException ex, WebRequest request){
         var errorResponse =

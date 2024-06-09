@@ -26,6 +26,13 @@ public class TopicService {
         var course = courseService.findById(courseId);
         var user = userService.findById(userId);
 
+        var isUserAllowed = course.getUsers().stream()
+                .anyMatch(u -> u.getId().equals(user.getId()));
+
+        if(!isUserAllowed){
+            throw new UnauthorizedActivityException("You are not allowed to create a topic in this course");
+        }
+
         var topic = createTopicDTO.toEntity(course, user);
 
         var newTopic = topicRepository.save(topic);

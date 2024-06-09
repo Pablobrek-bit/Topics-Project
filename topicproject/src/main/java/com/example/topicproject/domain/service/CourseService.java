@@ -3,6 +3,7 @@ package com.example.topicproject.domain.service;
 import com.example.topicproject.domain.dto.course.CourseDetailsDTO;
 import com.example.topicproject.domain.dto.course.CourseIdDTO;
 import com.example.topicproject.domain.dto.course.CreateCourseDTO;
+import com.example.topicproject.domain.dto.user.UserMinimalDTO;
 import com.example.topicproject.domain.entities.Course;
 import com.example.topicproject.domain.repository.CourseRepository;
 import com.example.topicproject.exceptions.CustomExceptions.CourseNotFoundException;
@@ -27,7 +28,11 @@ public class CourseService {
         Course course = findById(id);
 
         return new CourseDetailsDTO(course.getId(), course.getName(),
-                course.getCategory());
+                course.getCategory(),
+                course.getUsers()
+                        .stream()
+                        .map(user -> new UserMinimalDTO(user.getId(), user.getEmail(),
+                         user.getName())).toList());
 
     }
 
@@ -36,4 +41,6 @@ public class CourseService {
                 .orElseThrow(() -> new CourseNotFoundException("Course not found with " +
                         "id: " + id));
     }
+
+
 }

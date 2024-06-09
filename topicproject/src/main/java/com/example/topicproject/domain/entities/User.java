@@ -41,13 +41,19 @@ public class User implements UserDetails {
     )
     private List<Profile> profiles = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "user")
-//    private List<Topic> topics = new ArrayList<>();
     @OneToMany(mappedBy = "user")
     private List<Topic> topics = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<Response> responses = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "registration_user_course",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private List<Course> courses = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

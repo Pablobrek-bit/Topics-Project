@@ -1,5 +1,6 @@
 package com.example.topicproject.application.controller;
 
+import com.example.topicproject.domain.dto.course.CourseDetailsDTO;
 import com.example.topicproject.domain.dto.course.CourseIdDTO;
 import com.example.topicproject.domain.dto.course.CreateCourseDTO;
 import com.example.topicproject.domain.service.CourseService;
@@ -30,7 +31,7 @@ public class CourseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCourse(@PathVariable Long id){
+    public ResponseEntity<CourseDetailsDTO> getCourse(@PathVariable Long id){
         var course = courseService.getCourse(id);
 
         return ResponseEntity.ok(course);

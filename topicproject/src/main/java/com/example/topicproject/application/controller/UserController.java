@@ -17,7 +17,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping("/register")
     @Transactional
     public ResponseEntity<?> createUser(@RequestBody @Valid CreateUserDTO createUserDTO
             , UriComponentsBuilder uriComponentsBuilder) {
@@ -36,6 +36,16 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @PostMapping("/{courseId}")
+    @Transactional
+    public ResponseEntity<?> registerUserInCourse(@PathVariable Long courseId,
+                                              @RequestAttribute("id") String userId){
+        userService.registerUserInCourse(userId, courseId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+
     @GetMapping("/me")
     public ResponseEntity<?> getMe(@RequestAttribute("id") String userId){
         var user = userService.getUser(userId);
@@ -45,7 +55,6 @@ public class UserController {
     @PutMapping
     public ResponseEntity<?> updateUser(@RequestAttribute("id") String userId,
                                         @RequestBody @Valid UpdateUserDTO updateUserDTO){
-        System.out.println("chegou aqui");
         var user = userService.updateUser(userId, updateUserDTO);
 
         return ResponseEntity.ok(user);
